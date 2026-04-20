@@ -3,6 +3,9 @@
   "users" : [ {
     "id" : "16e822b4-68b1-4ec9-a65f-9138136f90b5",
     "username" : "admin",
+    "firstName" : "Admin",
+    "lastName" : "Example",
+    "email" : "admin@example.com",
     "emailVerified" : false,
     "attributes" : {
       "is_temporary_admin" : [ "true" ]
