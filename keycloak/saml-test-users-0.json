@@ -1,0 +1,27 @@
+{
+  "realm" : "saml-test",
+  "users" : [ {
+    "id" : "ac897762-16e8-49b5-afb4-e9310925de89",
+    "username" : "testuser",
+    "firstName" : "Test",
+    "lastName" : "Example",
+    "email" : "testuser@example.com",
+    "emailVerified" : false,
+    "enabled" : true,
+    "createdTimestamp" : 1776687469007,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "fe2752e3-064d-4a02-b62c-29f2d332d632",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1776687562772,
+      "secretData" : "{\"value\":\"Ipv535SpWsSYoVy0Pf7sXgGnQArCzP8UH4hmQaiX7jY=\",\"salt\":\"eOsMtK3j3QmX+UnrgMJvlA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-saml-test" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  } ]
+}

@@ -1,0 +1,94 @@
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - ./postgres/create-schema.sql:/docker-entrypoint-initdb.d/create-schema.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: pg_isready -h 127.0.0.1 -U postgres -d postgres
+      interval: 5s
+
+  dbgate:
+    image: dbgate/dbgate
+    environment:
+      CONNECTIONS: conn1
+      LABEL_conn1: postgres
+      SERVER_conn1: postgres
+      USER_conn1: postgres
+      PASSWORD_conn1: postgres
+      PORT_conn1: 5432
+      ENGINE_conn1: postgres@dbgate-plugin-postgres
+    ports:
+      - "5480:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  maildev:
+    image: maildev/maildev
+    environment:
+      TZ: Asia/Tokyo
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+
+  keycloak:
+    image: keycloak/keycloak:26.5.5
+    environment:
+      ## "admin" user will be import from volume mount files.
+      #KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      #KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_SCHEMA: keycloak
+      KC_DB_URL: jdbc:postgresql://postgres:5432/postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KC_HOSTNAME: http://localhost:8080
+      KC_PROXY_HEADERS: xforwarded
+      KC_HEALTH_ENABLED: true
+      KC_HTTP_MANAGEMENT_PORT: 9000
+      ## Local only
+      KC_HTTP_ENABLED: true
+    command:
+      - start
+      - --hostname-strict=false
+      - --import-realm
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: |
+        CMD-SHELL
+        { printf 'HEAD /health/ready HTTP/1.0\r\n\r\n' >&0; grep 'HTTP/1.0 200'; } 0<>/dev/tcp/localhost/9000
+      interval: 5s
+      retries: 10
+      start_period: 30s
+
+  saml-test-sp:
+    image: ghcr.io/beryju/saml-test-sp
+    ports:
+      - "9009:9009"
+    environment:
+      SP_BIND: 0.0.0.0:9009
+      SP_ROOT_URL: http://localhost:9009
+      SP_ENTITY_ID: saml-test-sp
+      SP_METADATA_URL: http://keycloak:8080/realms/saml-test/protocol/saml/descriptor
+      SP_COOKIE_NAME: token
+#      # If you don't want SSL, cut here
+#      SP_SSL_CERT: /fullchain.pem
+#      SP_SSL_KEY: /privkey.pem
+#    volumes:
+#      - ./fullchain.pem:/fullchain.pem
+#      - ./privkey.pem:/privkey.pem
+    depends_on:
+      keycloak:
+        condition: service_healthy
