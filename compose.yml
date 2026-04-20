@@ -56,7 +56,6 @@ services:
       KC_HTTP_ENABLED: true
     command:
       - start
-      - --hostname-strict=false
       - --import-realm
     volumes:
       - ./keycloak:/opt/keycloak/data/import
@@ -78,11 +77,12 @@ services:
     ports:
       - "9009:9009"
     environment:
-      SP_BIND: 0.0.0.0:9009
-      SP_ROOT_URL: http://localhost:9009
       SP_ENTITY_ID: saml-test-sp
       SP_METADATA_URL: http://keycloak:8080/realms/saml-test/protocol/saml/descriptor
-      SP_COOKIE_NAME: token
+#      # Options
+#      SP_BIND: 0.0.0.0:9009
+#      SP_ROOT_URL: http://localhost:9009
+#      SP_COOKIE_NAME: token
 #      # If you don't want SSL, cut here
 #      SP_SSL_CERT: /fullchain.pem
 #      SP_SSL_KEY: /privkey.pem
