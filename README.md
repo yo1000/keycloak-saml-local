@@ -10,7 +10,7 @@ How to run
 1. Run containers
 
 ```bash
-docker compose down && docker compose up
+docker compose down && docker compose up --build
 ```
 
 
@@ -20,12 +20,12 @@ How to confirm a SAML SP site login
 1. Run containers
 
 ```bash
-docker compose down && docker compose up
+docker compose down && docker compose up --build
 ```
 
-2. Access to SAML SP site and login
+2. Access to SAML SP site and goto Protected page
 
-http://localhost:9009/
+http://localhost:9009/protected
 
 - Username: `testuser`
 - Password: `ttttt-11111`

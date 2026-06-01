@@ -72,23 +72,23 @@ services:
       retries: 10
       start_period: 30s
 
-  saml-test-sp:
-    image: ghcr.io/beryju/saml-test-sp
+  saml-sp:
+    build:
+      context: .
+      dockerfile: docker/saml-sp.Dockerfile
+      args:
+        SRC: saml-sp
+    environment:
+      SERVER_PORT: 9009
+
+      SPRING_SECURITY_SAML2_RELYINGPARTY_REGISTRATION_KEYCLOAK_ENTITYID: "http://localhost:9009/saml2/service-provider-metadata/keycloak"
+      SPRING_SECURITY_SAML2_RELYINGPARTY_REGISTRATION_KEYCLOAK_ASSERTINGPARTY_METADATAURI: "http://keycloak:8080/realms/saml-test/protocol/saml/descriptor"
+
+      SPRING_SECURITY_SAML2_RELYINGPARTY_REGISTRATION_KEYCLOAK_SINGLELOGOUT_BINDING: POST
+      SPRING_SECURITY_SAML2_RELYINGPARTY_REGISTRATION_KEYCLOAK_SINGLELOGOUT_URL: "{baseUrl}/logout/saml2/slo"
+      SPRING_SECURITY_SAML2_RELYINGPARTY_REGISTRATION_KEYCLOAK_SINGLELOGOUT_RESPONSEURL: "{baseUrl}/logout/saml2/slo"
     ports:
       - "9009:9009"
-    environment:
-      SP_ENTITY_ID: saml-test-sp
-      SP_METADATA_URL: http://keycloak:8080/realms/saml-test/protocol/saml/descriptor
-#      # Options
-#      SP_BIND: 0.0.0.0:9009
-#      SP_ROOT_URL: http://localhost:9009
-#      SP_COOKIE_NAME: token
-#      # If you don't want SSL, cut here
-#      SP_SSL_CERT: /fullchain.pem
-#      SP_SSL_KEY: /privkey.pem
-#    volumes:
-#      - ./fullchain.pem:/fullchain.pem
-#      - ./privkey.pem:/privkey.pem
     depends_on:
       keycloak:
         condition: service_healthy
